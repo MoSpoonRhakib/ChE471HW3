@@ -5,21 +5,22 @@
 #[3]https://pythoninchemistry.org/sim_and_scat/important_considerations/pbc.html
 #[4]https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html
 #[5]https://github.com/MrFuguDataScience/Python_Basics/blob/main/Python_Profiling.ipynb
-
+#[6]https://colab.research.google.com/github/jakevdp/PythonDataScienceHandbook/blob/master/notebooks/01.07-Timing-and-Profiling.ipynb
 
 #importing libraries
-#%pip install line_profiler
-#%pip install memory_profiler
-
+'''
+%pip install line_profiler
+%pip install memory_profiler
+%load_ext line_profiler
+%load_ext memory_profiler
+'''
 
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-#from line_profiler import LineProfiler
-from memory_profiler import profile
+from line_profiler import LineProfiler
 
 
-@profile
 def simulate_ising(L, init_state, T, J, N_mc, random_seed=None):
   '''
   A function that takes in a grid size, initial state, Temperature
@@ -32,6 +33,7 @@ def simulate_ising(L, init_state, T, J, N_mc, random_seed=None):
 
   #First step is to initialize spins of ising grid
   # all_up = +1 , all_down = -1, random = +1 or -1
+  # Using 8-bit integers to save memory
   if init_state == "all_up":
     state = np.ones((L,L), dtype=np.int8)
   elif init_state == "all_down":
@@ -53,6 +55,7 @@ def simulate_ising(L, init_state, T, J, N_mc, random_seed=None):
     # Precompute neighbors using np.roll for all sites
     neighbors = (np.roll(state, 1, axis=0) + np.roll(state, -1, axis=0) + np.roll(state, 1, axis=1) + np.roll(state, -1, axis=1)) #Periodic boundary conditions
    
+    # Precompute random variables to reduce computation time
     random_indices = np.random.randint(0, L, size=(L * L, 2))
     random_numbers = np.random.random((L * L))   #creating indices in bulk rather than each L*L step 
 
@@ -106,8 +109,8 @@ def run_simulations(grid_size, T, J, N_mc):
 
   return grid_size, times_per_cycle, errors
 
-'''
-'''
+
+
 def calc_magnetization(trajectory):
   """
   Calculate magnetization for each Ising grid
@@ -118,8 +121,8 @@ def calc_magnetization(trajectory):
     M = np.sum(state) / (L*L)
     magnetization.append(M)
   return np.array(magnetization)
-'''
 
+'''
 '''
 def run_mag_calc(grid_size, N_mc, J, random_seed=None):
   '''
@@ -150,8 +153,8 @@ def run_mag_calc(grid_size, N_mc, J, random_seed=None):
 
   return magnetizations_values, magnetizations_errors
 
-'''
 
+'''
 
 '''def sweep(L, temperatures, N_mc, J, random_seed=None):
 
@@ -201,7 +204,6 @@ def plot_Mag_Time_Series(magnetization):
   plt.title('Magnetization vs Time at T = 2.27')
   plt.show()
 '''
-
 '''
 def plot_tsim_vs_N(L_values, t_sim, tsim_errors):
   N_values = np.array(L_values**2)
@@ -226,8 +228,8 @@ def plot_mag_vs_N(L_values, magnetizations_values, magnetizations_errors):
   plt.ylabel('Magnetizations')
   plt.title('Magnetizations vs System Size')
   plt.show()
-
 '''
+
 #temperature_range = np.linspace(1, 4.0, 20)
 init_state = "all_up" #initial state
 grid_size = np.linspace(10,30,3, dtype=int) #grid size
@@ -237,6 +239,7 @@ T=5
 
 random_seed = np.random.randint(0, N_mc) #how to make it jax related??
 step = np.random.randint(0, N_mc) #how to make it jax related??
+
 '''
 #Running functions for t_sim vs N
 L_values, t_simulate, tsim_errors = run_simulations(grid_size, T, J, N_mc)
@@ -267,17 +270,3 @@ mag_at_tc = calc_magnetization(trajectory_critical)
 plot_Mag_Time_Series(mag_at_tc)
 '''
 
-'''
-#Line profiler for simulate_ising function [5]
-def lineprofile_simulation():
-
-  l_profiler = LineProfiler()
-  l_p_wrapper = l_profiler(simulate_ising)
-  for L in grid_size:
-      l_p_wrapper(L, init_state, T=T, J=J, N_mc=N_mc, random_seed = random_seed)
-      l_profiler.print_stats()
-
-'''
-
-#Memory profiler for simulate_ising function
-simulate_ising(L=10, init_state=init_state, T=T, J=J, N_mc=N_mc, random_seed=random_seed)

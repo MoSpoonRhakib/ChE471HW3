@@ -22,6 +22,8 @@ from line_profiler import LineProfiler
 
 
 
+
+
 def simulate_ising(L, init_state, T, J, N_mc, random_seed=None):
   '''
   A function that takes in a grid size, initial state, Temperature
@@ -263,8 +265,7 @@ plot_Mag_Time_Series(mag_at_tc)
 
 #lineprofile_simulation()
 
-#Line Profiler [5]
-%lprun -f simulate_ising simulate_ising(10, init_state, T=T, J=J, N_mc=N_mc, random_seed=random_seed)
+
 
 
 
