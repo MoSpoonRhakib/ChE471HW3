@@ -5,18 +5,23 @@
 #[3]https://pythoninchemistry.org/sim_and_scat/important_considerations/pbc.html
 #[4]https://matplotlib.org/stable/api/_as_gen/matplotlib.pyplot.imshow.html
 #[5]https://github.com/MrFuguDataScience/Python_Basics/blob/main/Python_Profiling.ipynb
+#[6]https://colab.research.google.com/github/jakevdp/PythonDataScienceHandbook/blob/master/notebooks/01.07-Timing-and-Profiling.ipynb
 
 
 #importing libraries
+%pip install line_profiler
+%pip install memory_profiler
+%load_ext line_profiler
+%load_ext memory_profiler
+
 
 import numpy as np
 import matplotlib.pyplot as plt
 import time
-#from line_profiler import LineProfiler
-from memory_profiler import profile
+from line_profiler import LineProfiler
 
 
-@profile
+
 def simulate_ising(L, init_state, T, J, N_mc, random_seed=None):
   '''
   A function that takes in a grid size, initial state, Temperature
@@ -70,8 +75,8 @@ def simulate_ising(L, init_state, T, J, N_mc, random_seed=None):
   plt.show()
 '''
 
-
-'''def run_simulations(grid_size, T, J, N_mc):
+'''
+def run_simulations(grid_size, T, J, N_mc):
   """
   Calculate t_simulate for each N (LxL)
   """
@@ -104,8 +109,7 @@ def calc_magnetization(trajectory):
     magnetization.append(M)
   return np.array(magnetization)
 
-'''
-'''
+
 def run_mag_calc(grid_size, N_mc, J, random_seed=None):
   '''
   #Calculate average magnetization for each N (LxL)
@@ -134,8 +138,8 @@ def run_mag_calc(grid_size, N_mc, J, random_seed=None):
       print(f'System size {L}x{L}: Magnetization = {avg_magnetization:.5f}')
 
   return magnetizations_values, magnetizations_errors
-
 '''
+
 '''
 def sweep(L, temperatures, N_mc, J, random_seed=None):
 
@@ -228,9 +232,9 @@ plot_tsim_vs_N(L_values, t_simulate, tsim_errors)
 #Running functions for Mag vs N
 mag_values, mag_errors = run_mag_calc(grid_size, N_mc, J, random_seed=random_seed)
 plot_mag_vs_N(L_values, mag_values, mag_errors)
-
-
 '''
+
+
 '''
 # Plotting state functions near and not near critical temperature
 trajectory_up = simulate_ising(L, init_state = 'all_up', T=1.5, J=1.0, N_mc=N_mc, random_seed=None) #mostly all have the same upspin and maintains magnetism
@@ -250,16 +254,29 @@ mag_at_tc = calc_magnetization(trajectory_critical)
 plot_Mag_Time_Series(mag_at_tc)
 '''
 
-
-#Line profiler for simulate_ising function [5]
-'''def lineprofile_simulation():
-
-  l_profiler = LineProfiler()
-  l_p_wrapper = l_profiler(simulate_ising)
-  for L in grid_size:
-      l_p_wrapper(L, init_state, T=T, J=J, N_mc=N_mc, random_seed = random_seed)
-      l_profiler.print_stats()
-'''
-
 #Memory profiler for simulate_ising function
-simulate_ising(L=10, init_state=init_state, T=T, J=J, N_mc=N_mc, random_seed=random_seed)
+#@profile
+#def memoryprofile_simulation():
+#  for L in grid_size:
+#    simulate_ising(L, init_state, T=T, J=J, N_mc=N_mc, random_seed=random_seed)
+
+
+#lineprofile_simulation()
+
+#Line Profiler [5]
+%lprun -f simulate_ising simulate_ising(10, init_state, T=T, J=J, N_mc=N_mc, random_seed=random_seed)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
